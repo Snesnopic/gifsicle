@@ -659,7 +659,7 @@ typedef struct odselect_planitem {
     uint16_t frac;
 } odselect_planitem;
 
-static int* ordered_dither_lum;
+static _Thread_local int* ordered_dither_lum;
 
 static void plan_from_cplan(uint8_t* plan, int nplan,
                             const odselect_planitem* cp, int ncp, int whole) {

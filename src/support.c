@@ -16,10 +16,10 @@
 #include <assert.h>
 #include <errno.h>
 
-const char *program_name = "gifsicle";
-static int verbose_pos = 0;
-int error_count = 0;
-int no_warnings = 0;
+_Thread_local const char *program_name = "gifsicle";
+_Thread_local static int verbose_pos = 0;
+_Thread_local int error_count = 0;
+_Thread_local int no_warnings = 0;
 
 
 static void
@@ -550,17 +550,17 @@ explode_filename(const char *filename, int number, const char *name, int max_nim
  * parsing functions
  **/
 
-int frame_spec_1;
-int frame_spec_2;
-char *frame_spec_name;
-int dimensions_x;
-int dimensions_y;
-int position_x;
-int position_y;
-Gif_Color parsed_color;
-Gif_Color parsed_color2;
-double parsed_scale_factor_x;
-double parsed_scale_factor_y;
+_Thread_local int frame_spec_1;
+_Thread_local int frame_spec_2;
+_Thread_local char *frame_spec_name;
+_Thread_local int dimensions_x;
+_Thread_local int dimensions_y;
+_Thread_local int position_x;
+_Thread_local int position_y;
+_Thread_local Gif_Color parsed_color;
+_Thread_local Gif_Color parsed_color2;
+double _Thread_local parsed_scale_factor_x;
+double _Thread_local parsed_scale_factor_y;
 
 int
 parse_frame_spec(Clp_Parser *clp, const char *arg, int complain, void *thunk)
