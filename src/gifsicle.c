@@ -26,37 +26,37 @@
 #define static_assert(x, msg) switch ((int) (x)) case 0: case !!((int) (x)):
 #endif
 
-_Thread_local Gt_Frame def_frame;
+G_THREAD_LOCAL Gt_Frame def_frame;
 
-_Thread_local Gt_Frameset *frames = 0;
-_Thread_local int first_input_frame = 0;
-_Thread_local Gt_Frameset *nested_frames = 0;
+G_THREAD_LOCAL Gt_Frameset *frames = 0;
+G_THREAD_LOCAL int first_input_frame = 0;
+G_THREAD_LOCAL Gt_Frameset *nested_frames = 0;
 
-_Thread_local Gif_Stream *input = 0;
-_Thread_local const char *input_name = 0;
-_Thread_local static int unoptimizing = 0;
+G_THREAD_LOCAL Gif_Stream *input = 0;
+G_THREAD_LOCAL const char *input_name = 0;
+G_THREAD_LOCAL static int unoptimizing = 0;
 
 const int GIFSICLE_DEFAULT_THREAD_COUNT = 8;
-_Thread_local int thread_count = 0;
+G_THREAD_LOCAL int thread_count = 0;
 
-_Thread_local static int gif_read_flags = 0;
-_Thread_local static int nextfile = 0;
-_Thread_local Gif_CompressInfo gif_write_info;
+G_THREAD_LOCAL static int gif_read_flags = 0;
+G_THREAD_LOCAL static int nextfile = 0;
+G_THREAD_LOCAL Gif_CompressInfo gif_write_info;
 
-_Thread_local static int frames_done = 0;
-_Thread_local static int files_given = 0;
+G_THREAD_LOCAL static int frames_done = 0;
+G_THREAD_LOCAL static int files_given = 0;
 
-_Thread_local int warn_local_colormaps = 1;
+G_THREAD_LOCAL int warn_local_colormaps = 1;
 
-static _Thread_local Gt_ColorTransform *input_transforms;
-static _Thread_local Gt_ColorTransform *output_transforms;
+static G_THREAD_LOCAL Gt_ColorTransform *input_transforms;
+static G_THREAD_LOCAL Gt_ColorTransform *output_transforms;
 
-_Thread_local int mode = BLANK_MODE;
-_Thread_local int nested_mode = 0;
+G_THREAD_LOCAL int mode = BLANK_MODE;
+G_THREAD_LOCAL int nested_mode = 0;
 
-static _Thread_local int infoing = 0;
-_Thread_local int verbosing = 0;
-static _Thread_local int no_ignore_errors = 0;
+static G_THREAD_LOCAL int infoing = 0;
+G_THREAD_LOCAL int verbosing = 0;
+static G_THREAD_LOCAL int no_ignore_errors = 0;
 
 
 #define CHANGED(next, flag)     (((next) & (1<<(flag))) != 0)
@@ -69,7 +69,7 @@ static _Thread_local int no_ignore_errors = 0;
   } while (0)
 
 /* frame option types */
-static _Thread_local int next_frame = 0;
+static G_THREAD_LOCAL int next_frame = 0;
 #define CH_INTERLACE            0
 #define CH_DISPOSAL             1
 #define CH_DELAY                2
@@ -88,7 +88,7 @@ static const char *frame_option_types[] = {
 };
 
 /* input option types */
-static _Thread_local int next_input = 0;
+static G_THREAD_LOCAL int next_input = 0;
 #define CH_UNOPTIMIZE           0
 #define CH_CHANGE_COLOR         1
 static const char *input_option_types[] = {
@@ -96,11 +96,11 @@ static const char *input_option_types[] = {
 };
 
 /* output option types */
-static _Thread_local Gt_OutputData def_output_data;
-_Thread_local Gt_OutputData active_output_data;
-static _Thread_local int next_output = 0;
-static _Thread_local int active_next_output = 0;
-static _Thread_local int any_output_successful = 0;
+static G_THREAD_LOCAL Gt_OutputData def_output_data;
+G_THREAD_LOCAL Gt_OutputData active_output_data;
+static G_THREAD_LOCAL int next_output = 0;
+static G_THREAD_LOCAL int active_next_output = 0;
+static G_THREAD_LOCAL int any_output_successful = 0;
 #define CH_LOOPCOUNT            0
 #define CH_LOGICAL_SCREEN       1
 #define CH_OPTIMIZE             2
@@ -356,7 +356,7 @@ const Clp_Option options[] = {
 
 };
 
-_Thread_local Clp_Parser* clp;
+G_THREAD_LOCAL Clp_Parser* clp;
 
 
 static void combine_output_options(void);
@@ -608,7 +608,7 @@ struct StoredFile {
   char name[1];
 };
 
-static _Thread_local struct StoredFile *stored_files = 0;
+static G_THREAD_LOCAL struct StoredFile *stored_files = 0;
 
 static FILE *
 open_giffile(const char *name)

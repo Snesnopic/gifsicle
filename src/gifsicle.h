@@ -7,6 +7,12 @@
    as this notice is kept intact and this source code is made available. There
    is no warranty, express or implied. */
 
+#ifdef __cplusplus
+#define G_THREAD_LOCAL thread_local
+#else
+#define G_THREAD_LOCAL _Thread_local
+#endif
+
 #ifndef GIFSICLE_H
 #define GIFSICLE_H
 #include <lcdfgif/gif.h>
@@ -141,8 +147,8 @@ typedef struct {
 
 } Gt_OutputData;
 
-extern _Thread_local Gt_OutputData active_output_data;
-extern _Thread_local Clp_Parser* clp;
+extern G_THREAD_LOCAL Gt_OutputData active_output_data;
+extern G_THREAD_LOCAL Clp_Parser* clp;
 
 #define GT_SCALING_NONE         0
 #define GT_SCALING_RESIZE       1
@@ -179,12 +185,12 @@ constrain(int low, int x, int high)
 /*****
  * error & verbose
  **/
-extern _Thread_local const char *program_name;
-extern _Thread_local int verbosing;
-extern _Thread_local int error_count;
-extern _Thread_local int no_warnings;
-extern _Thread_local int thread_count;
-extern _Thread_local Gif_CompressInfo gif_write_info;
+extern G_THREAD_LOCAL const char *program_name;
+extern G_THREAD_LOCAL int verbosing;
+extern G_THREAD_LOCAL int error_count;
+extern G_THREAD_LOCAL int no_warnings;
+extern G_THREAD_LOCAL int thread_count;
+extern G_THREAD_LOCAL Gif_CompressInfo gif_write_info;
 
 void fatal_error(const char* format, ...) NORETURN;
 void warning(int need_file, const char* format, ...);
@@ -227,7 +233,7 @@ void    mark_used_colors(Gif_Stream *gfs, Gif_Image *gfi, Gt_Crop *crop,
 int     find_color_index(Gif_Color *c, int nc, Gif_Color *);
 int     merge_colormap_if_possible(Gif_Colormap *, Gif_Colormap *);
 
-extern _Thread_local int warn_local_colormaps;
+extern G_THREAD_LOCAL int warn_local_colormaps;
 void    merge_stream(Gif_Stream *dest, Gif_Stream *src, int no_comments);
 void    merge_comments(Gif_Comment *destc, Gif_Comment *srcc);
 Gif_Image* merge_image(Gif_Stream* dest, Gif_Stream* src, Gif_Image* srci,
@@ -291,17 +297,17 @@ Gif_Colormap* colormap_median_cut(struct kchist* kch, Gt_OutputData* od);
 /*****
  * parsing stuff
  **/
-extern _Thread_local int      frame_spec_1;
-extern _Thread_local int      frame_spec_2;
-extern _Thread_local char *   frame_spec_name;
-extern _Thread_local int      dimensions_x;
-extern _Thread_local int      dimensions_y;
-extern _Thread_local int      position_x;
-extern _Thread_local int      position_y;
-extern _Thread_local Gif_Color parsed_color;
-extern _Thread_local Gif_Color parsed_color2;
-extern _Thread_local double   parsed_scale_factor_x;
-extern _Thread_local double   parsed_scale_factor_y;
+extern G_THREAD_LOCAL int      frame_spec_1;
+extern G_THREAD_LOCAL int      frame_spec_2;
+extern G_THREAD_LOCAL char *   frame_spec_name;
+extern G_THREAD_LOCAL int      dimensions_x;
+extern G_THREAD_LOCAL int      dimensions_y;
+extern G_THREAD_LOCAL int      position_x;
+extern G_THREAD_LOCAL int      position_y;
+extern G_THREAD_LOCAL Gif_Color parsed_color;
+extern G_THREAD_LOCAL Gif_Color parsed_color2;
+extern G_THREAD_LOCAL double   parsed_scale_factor_x;
+extern G_THREAD_LOCAL double   parsed_scale_factor_y;
 
 int             parse_frame_spec(Clp_Parser*, const char*, int, void*);
 int             parse_dimensions(Clp_Parser*, const char*, int, void*);
@@ -311,8 +317,8 @@ int             parse_color(Clp_Parser*, const char*, int, void*);
 int             parse_rectangle(Clp_Parser*, const char*, int, void*);
 int             parse_two_colors(Clp_Parser*, const char*, int, void*);
 
-extern _Thread_local Gif_Stream *input;
-extern _Thread_local const char *input_name;
+extern G_THREAD_LOCAL Gif_Stream *input;
+extern G_THREAD_LOCAL const char *input_name;
 
 void            input_stream(const char*);
 void            input_done(void);
@@ -321,7 +327,7 @@ void            output_frames(void);
 /*****
  * stuff with frames
  **/
-extern _Thread_local Gt_Frame def_frame;
+extern G_THREAD_LOCAL Gt_Frame def_frame;
 #define         FRAME(fs, i)    ((fs)->f[i])
 
 Gt_Frameset *   new_frameset(int initial_cap);
@@ -345,7 +351,7 @@ void            blank_frameset(Gt_Frameset*, int from, int to, int delete_ob);
 #define INSERTING       6
 #define FRAME_SELECTION_MODE_MASK 0x1F
 
-extern _Thread_local int mode;
-extern _Thread_local int nested_mode;
+extern G_THREAD_LOCAL int mode;
+extern G_THREAD_LOCAL int nested_mode;
 
 #endif

@@ -16,10 +16,10 @@
 #include <assert.h>
 #include <errno.h>
 
-_Thread_local const char *program_name = "gifsicle";
-_Thread_local static int verbose_pos = 0;
-_Thread_local int error_count = 0;
-_Thread_local int no_warnings = 0;
+G_THREAD_LOCAL const char *program_name = "gifsicle";
+G_THREAD_LOCAL static int verbose_pos = 0;
+G_THREAD_LOCAL int error_count = 0;
+G_THREAD_LOCAL int no_warnings = 0;
 
 
 static void
@@ -550,17 +550,17 @@ explode_filename(const char *filename, int number, const char *name, int max_nim
  * parsing functions
  **/
 
-_Thread_local int frame_spec_1;
-_Thread_local int frame_spec_2;
-_Thread_local char *frame_spec_name;
-_Thread_local int dimensions_x;
-_Thread_local int dimensions_y;
-_Thread_local int position_x;
-_Thread_local int position_y;
-_Thread_local Gif_Color parsed_color;
-_Thread_local Gif_Color parsed_color2;
-double _Thread_local parsed_scale_factor_x;
-double _Thread_local parsed_scale_factor_y;
+G_THREAD_LOCAL int frame_spec_1;
+G_THREAD_LOCAL int frame_spec_2;
+G_THREAD_LOCAL char *frame_spec_name;
+G_THREAD_LOCAL int dimensions_x;
+G_THREAD_LOCAL int dimensions_y;
+G_THREAD_LOCAL int position_x;
+G_THREAD_LOCAL int position_y;
+G_THREAD_LOCAL Gif_Color parsed_color;
+G_THREAD_LOCAL Gif_Color parsed_color2;
+double G_THREAD_LOCAL parsed_scale_factor_x;
+double G_THREAD_LOCAL parsed_scale_factor_y;
 
 int
 parse_frame_spec(Clp_Parser *clp, const char *arg, int complain, void *thunk)

@@ -39,26 +39,26 @@ typedef struct {
 } Gif_OptData;
 
 /* Screen width and height */
-static _Thread_local int screen_width;
-static _Thread_local int screen_height;
+static G_THREAD_LOCAL int screen_width;
+static G_THREAD_LOCAL int screen_height;
 
 /* Colormap containing all colors in the image. May have >256 colors */
-static _Thread_local Gif_Colormap *all_colormap;
+static G_THREAD_LOCAL Gif_Colormap *all_colormap;
 /* Histogram so we can find colors quickly */
-static _Thread_local kchist all_colormap_hist;
+static G_THREAD_LOCAL kchist all_colormap_hist;
 
 /* The old global colormap, or a fake one we created if necessary */
-static _Thread_local Gif_Colormap *in_global_map;
+static G_THREAD_LOCAL Gif_Colormap *in_global_map;
 
 /* The new global colormap */
-static _Thread_local Gif_Colormap *out_global_map;
+static G_THREAD_LOCAL Gif_Colormap *out_global_map;
 
 #define TRANSP (0)
 #define NOT_IN_OUT_GLOBAL (256)
-static _Thread_local unsigned background;
-static _Thread_local int image_index;
+static G_THREAD_LOCAL unsigned background;
+static G_THREAD_LOCAL int image_index;
 
-static _Thread_local penalty_type *permuting_sort_values;
+static G_THREAD_LOCAL penalty_type *permuting_sort_values;
 
 #define REQUIRED        2
 #define REPLACE_TRANSP  1
