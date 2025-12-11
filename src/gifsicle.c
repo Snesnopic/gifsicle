@@ -17,7 +17,9 @@
 #include <ctype.h>
 #include <assert.h>
 #include <errno.h>
+#if !defined(_WIN32) && !defined(_WIN64)
 #include <unistd.h>
+#endif
 #if HAVE_UNISTD_H
 # include <unistd.h>
 #endif
