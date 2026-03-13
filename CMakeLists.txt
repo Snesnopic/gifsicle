@@ -21,7 +21,7 @@ add_compile_definitions(
         PACKAGE="${PROJECT_NAME}"
         GIF_ALLOCATOR_DEFINED=1
         PATHNAME_SEPARATOR='/'
-        RANDOM=random
+        RANDOM=rand
         HAVE_INTTYPES_H=1
         HAVE_SNPRINTF=1
         HAVE_STRERROR=1
