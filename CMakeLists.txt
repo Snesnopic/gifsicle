@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 project(gifsicle VERSION 1.96 LANGUAGES C)
 
 # build options
+option(BUILD_GIFSICLE_CLI "build gifsicle command line executable" ON)
 option(BUILD_GIFVIEW "build gifview x11 viewer" ON)
 option(BUILD_GIFDIFF "build gifdiff utility" ON)
 option(ENABLE_UNGIF "build without lzw compression" OFF)
@@ -65,11 +66,20 @@ set(LIBGIFSICLE_SOURCES
         src/xform.c
 )
 
+if(UNIX)
+    add_compile_definitions(HAVE_MKSTEMP=1)
+endif()
+
 if(ENABLE_UNGIF)
     list(APPEND LIBGIFSICLE_SOURCES src/ungifwrt.c)
     add_compile_definitions(GIF_UNGIF=1)
 else()
     list(APPEND LIBGIFSICLE_SOURCES src/gifwrite.c)
+endif()
+
+# include gifsicle.c to resolve missing cli symbols when built as a library
+if(NOT BUILD_GIFSICLE_CLI)
+    list(APPEND LIBGIFSICLE_SOURCES src/gifsicle.c)
 endif()
 
 # msvc already includes math functions in the standard c runtime
@@ -86,9 +96,16 @@ if(Threads_FOUND AND HAVE_PTHREAD_H)
     target_link_libraries(libgifsicle PUBLIC Threads::Threads)
 endif()
 
+# rename main to prevent conflicts with parent project
+if(NOT BUILD_GIFSICLE_CLI)
+    target_compile_definitions(libgifsicle PRIVATE "main=gifsicle_hidden_main")
+endif()
+
 # main cli target
-add_executable(gifsicle src/gifsicle.c)
-target_link_libraries(gifsicle PRIVATE libgifsicle)
+if(BUILD_GIFSICLE_CLI)
+    add_executable(gifsicle src/gifsicle.c)
+    target_link_libraries(gifsicle PRIVATE libgifsicle)
+endif()
 
 # gifdiff target
 if(BUILD_GIFDIFF)
