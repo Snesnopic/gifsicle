@@ -7,7 +7,7 @@
    as this notice is kept intact and this source code is made available. There
    is no warranty, express or implied. */
 
-#include <config.h>
+#include "config.h"
 #ifdef X_DISPLAY_MISSING
 #error "You can't compile gifview without X."
 #endif
