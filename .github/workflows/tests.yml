@@ -2,25 +2,24 @@ name: Tests
 
 on:
   push:
-    branches: [ master, github ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ master ]
+    branches: [ "master" ]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Configure and build
-      run: |
-        autoreconf -i
-        ./configure
+      - name: Configure CMake
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
 
-    - name: Make
-      run: make
+      - name: Build
+        run: cmake --build build --config Release
 
-    - name: Run tests
-      run: make check
+      - name: Run Tests (CTest)
+        working-directory: ${{ github.workspace }}/build
+        run: ctest --output-on-failure --build-config Release

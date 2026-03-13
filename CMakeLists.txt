@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.15)
 project(gifsicle VERSION 1.96 LANGUAGES C)
 
-# options
+# build options
 option(BUILD_GIFVIEW "build gifview x11 viewer" ON)
 option(BUILD_GIFDIFF "build gifdiff utility" ON)
 option(ENABLE_UNGIF "build without lzw compression" OFF)
 
-# define macros globally instead of using config.h.in
+# global macros (replaces config.h.in)
 add_compile_definitions(
         VERSION="${PROJECT_VERSION}"
         PACKAGE="${PROJECT_NAME}"
@@ -21,12 +21,22 @@ add_compile_definitions(
         HAVE_POW=1
 )
 
-add_compile_options(-W -Wall)
+# thread support globally defined to prevent tls mismatches
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+find_package(Threads)
+if(Threads_FOUND)
+    add_compile_definitions(
+            ENABLE_THREADS=1
+            HAVE___SYNC_ADD_AND_FETCH=1
+    )
+endif()
 
+
+# generate empty config.h for legacy includes
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/config.h" "/* auto-generated empty config */\n")
 include_directories("${CMAKE_CURRENT_BINARY_DIR}" "include")
 
-# libgifsicle
+# libgifsicle (core library)
 set(LIBGIFSICLE_SOURCES
         src/clp.c
         src/fmalloc.c
@@ -51,28 +61,21 @@ endif()
 add_library(libgifsicle STATIC ${LIBGIFSICLE_SOURCES})
 target_link_libraries(libgifsicle PUBLIC m)
 
-# thread support
-set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-find_package(Threads)
 if(Threads_FOUND)
     target_link_libraries(libgifsicle PUBLIC Threads::Threads)
-    target_compile_definitions(libgifsicle PUBLIC
-            ENABLE_THREADS=1
-            HAVE___SYNC_ADD_AND_FETCH=1
-    )
 endif()
 
-# gifsicle executable
+# main cli target
 add_executable(gifsicle src/gifsicle.c)
 target_link_libraries(gifsicle PRIVATE libgifsicle)
 
-# gifdiff executable
+# gifdiff target
 if(BUILD_GIFDIFF)
     add_executable(gifdiff src/gifdiff.c)
     target_link_libraries(gifdiff PRIVATE libgifsicle)
 endif()
 
-# gifview executable
+# gifview target
 if(BUILD_GIFVIEW)
     find_package(X11)
     if(X11_FOUND)
@@ -82,3 +85,24 @@ if(BUILD_GIFVIEW)
         message(WARNING "x11 not found, skipping gifview target")
     endif()
 endif()
+
+# enable ctest framework
+enable_testing()
+
+# create a custom 'check' target to mimic make check
+add_custom_target(check
+        COMMAND ${CMAKE_CTEST_COMMAND} --force-new-ctest-process --output-on-failure
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+# register tests
+file(GLOB TEST_FILES "test/*.testie")
+foreach(TEST_FILE ${TEST_FILES})
+    get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
+    add_test(NAME ${TEST_NAME} COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/test/testie ${TEST_FILE})
+
+    # inject the build directory into path so testie uses the newly compiled binaries
+    set_tests_properties(${TEST_NAME} PROPERTIES
+            ENVIRONMENT "PATH=${CMAKE_CURRENT_BINARY_DIR}:$ENV{PATH}"
+    )
+endforeach()
