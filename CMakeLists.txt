@@ -6,15 +6,12 @@ option(BUILD_GIFVIEW "build gifview x11 viewer" ON)
 option(BUILD_GIFDIFF "build gifdiff utility" ON)
 option(ENABLE_UNGIF "build without lzw compression" OFF)
 
-include(CheckIncludeFiles)
-check_include_files(pthread.h HAVE_PTHREAD_H)
-
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
 include(CheckIncludeFiles)
-check_include_files(pthread.h HAVE_PTHREAD_H)
 # check headers dynamically
+check_include_files(pthread.h HAVE_PTHREAD_H)
 check_include_files(unistd.h HAVE_UNISTD_H)
 check_include_files(sys/types.h HAVE_SYS_TYPES_H)
 
@@ -40,6 +37,7 @@ endif()
 if(HAVE_SYS_TYPES_H)
     add_compile_definitions(HAVE_SYS_TYPES_H=1)
 endif()
+
 # thread support: enable only if posix threads are present
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 find_package(Threads)
@@ -49,7 +47,6 @@ if(Threads_FOUND AND HAVE_PTHREAD_H)
             HAVE___SYNC_ADD_AND_FETCH=1
     )
 endif()
-
 
 # generate config.h for legacy includes
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/config.h" "/* auto-generated config */
@@ -87,8 +84,15 @@ else()
     list(APPEND LIBGIFSICLE_SOURCES src/gifwrite.c)
 endif()
 
+# msvc already includes math functions in the standard c runtime
+if(MSVC)
+    set(MATH_LIB "")
+else()
+    set(MATH_LIB "m")
+endif()
+
 add_library(libgifsicle STATIC ${LIBGIFSICLE_SOURCES})
-target_link_libraries(libgifsicle PUBLIC m)
+target_link_libraries(libgifsicle PUBLIC ${MATH_LIB})
 
 if(Threads_FOUND AND HAVE_PTHREAD_H)
     target_link_libraries(libgifsicle PUBLIC Threads::Threads)
