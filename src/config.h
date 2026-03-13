@@ -122,8 +122,10 @@
 #define PACKAGE_VERSION "1.96"
 
 /* Pathname separator character ('/' on Unix). */
+#ifdef WIN32
+#undef PATHNAME_SEPARATOR
 #define PATHNAME_SEPARATOR '\\'
-
+#endif
 /* Define to a function that returns a random number. */
 #define RANDOM rand
 
@@ -142,9 +144,6 @@
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
-/* Version number of package */
-#define VERSION "1.96 (Windows)"
-
 /* Define if X is not available. */
 #define X_DISPLAY_MISSING 1
 
@@ -160,9 +159,10 @@
 #endif
 
 /* Windows doesn't have popen, but it does have _popen. */
+#ifdef WIN32
 #define popen _popen
 #define pclose _pclose
-
+#endif
 #include <stddef.h>
 
 #ifdef __cplusplus

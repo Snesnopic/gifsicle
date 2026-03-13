@@ -8,7 +8,7 @@
    as this notice is kept intact and this source code is made available. There
    is no warranty, express or implied. */
 
-#include <config.h>
+#include "config.h"
 #include "gifsicle.h"
 #include "kcolor.h"
 #include <string.h>
@@ -28,33 +28,23 @@
 #define static_assert(x, msg) switch ((int) (x)) case 0: case !!((int) (x)):
 #endif
 
-G_THREAD_LOCAL Gt_Frame def_frame;
-
 G_THREAD_LOCAL Gt_Frameset *frames = 0;
 G_THREAD_LOCAL int first_input_frame = 0;
 G_THREAD_LOCAL Gt_Frameset *nested_frames = 0;
 
 G_THREAD_LOCAL Gif_Stream *input = 0;
-G_THREAD_LOCAL const char *input_name = 0;
 G_THREAD_LOCAL static int unoptimizing = 0;
 
 const int GIFSICLE_DEFAULT_THREAD_COUNT = 8;
-G_THREAD_LOCAL int thread_count = 0;
 
 G_THREAD_LOCAL static int gif_read_flags = 0;
 G_THREAD_LOCAL static int nextfile = 0;
-G_THREAD_LOCAL Gif_CompressInfo gif_write_info;
 
 G_THREAD_LOCAL static int frames_done = 0;
 G_THREAD_LOCAL static int files_given = 0;
 
-G_THREAD_LOCAL int warn_local_colormaps = 1;
-
 static G_THREAD_LOCAL Gt_ColorTransform *input_transforms;
 static G_THREAD_LOCAL Gt_ColorTransform *output_transforms;
-
-G_THREAD_LOCAL int mode = BLANK_MODE;
-G_THREAD_LOCAL int nested_mode = 0;
 
 static G_THREAD_LOCAL int infoing = 0;
 G_THREAD_LOCAL int verbosing = 0;
@@ -357,8 +347,6 @@ const Clp_Option options[] = {
   { "threads", 'j', THREADS_OPT, Clp_ValUnsigned, Clp_Optional | Clp_Negate },
 
 };
-
-G_THREAD_LOCAL Clp_Parser* clp;
 
 
 static void combine_output_options(void);

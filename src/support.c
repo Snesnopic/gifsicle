@@ -7,7 +7,7 @@
    as this notice is kept intact and this source code is made available. There
    is no warranty, express or implied. */
 
-#include <config.h>
+#include "config.h"
 #include "gifsicle.h"
 #include <stdio.h>
 #include <stdarg.h>
@@ -20,7 +20,15 @@ G_THREAD_LOCAL const char *program_name = "gifsicle";
 G_THREAD_LOCAL static int verbose_pos = 0;
 G_THREAD_LOCAL int error_count = 0;
 G_THREAD_LOCAL int no_warnings = 0;
+G_THREAD_LOCAL int thread_count = 1;
+G_THREAD_LOCAL int warn_local_colormaps = 1;
+G_THREAD_LOCAL Gif_CompressInfo gif_write_info;
 
+G_THREAD_LOCAL int mode = 0;
+G_THREAD_LOCAL int nested_mode = 0;
+G_THREAD_LOCAL Clp_Parser *clp = NULL;
+G_THREAD_LOCAL const char *input_name = "";
+G_THREAD_LOCAL Gt_Frame def_frame;
 
 static void
 verror(const char* landmark, int need_file,
