@@ -6,6 +6,9 @@ option(BUILD_GIFVIEW "build gifview x11 viewer" ON)
 option(BUILD_GIFDIFF "build gifdiff utility" ON)
 option(ENABLE_UNGIF "build without lzw compression" OFF)
 
+include(CheckIncludeFiles)
+check_include_files(pthread.h HAVE_PTHREAD_H)
+
 # global macros (replaces config.h.in)
 add_compile_definitions(
         VERSION="${PROJECT_VERSION}"
@@ -19,12 +22,13 @@ add_compile_definitions(
         HAVE_SNPRINTF=1
         HAVE_STRERROR=1
         HAVE_POW=1
+        HAVE_UINTPTR_T=1
 )
 
-# thread support globally defined to prevent tls mismatches
+# thread support: enable only if posix threads are present
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 find_package(Threads)
-if(Threads_FOUND)
+if(Threads_FOUND AND HAVE_PTHREAD_H)
     add_compile_definitions(
             ENABLE_THREADS=1
             HAVE___SYNC_ADD_AND_FETCH=1
@@ -61,7 +65,7 @@ endif()
 add_library(libgifsicle STATIC ${LIBGIFSICLE_SOURCES})
 target_link_libraries(libgifsicle PUBLIC m)
 
-if(Threads_FOUND)
+if(Threads_FOUND AND HAVE_PTHREAD_H)
     target_link_libraries(libgifsicle PUBLIC Threads::Threads)
 endif()
 
@@ -89,19 +93,15 @@ endif()
 # enable ctest framework
 enable_testing()
 
-# create a custom 'check' target to mimic make check
 add_custom_target(check
         COMMAND ${CMAKE_CTEST_COMMAND} --force-new-ctest-process --output-on-failure
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-# register tests
 file(GLOB TEST_FILES "test/*.testie")
 foreach(TEST_FILE ${TEST_FILES})
     get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
     add_test(NAME ${TEST_NAME} COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/test/testie ${TEST_FILE})
-
-    # inject the build directory into path so testie uses the newly compiled binaries
     set_tests_properties(${TEST_NAME} PROPERTIES
             ENVIRONMENT "PATH=${CMAKE_CURRENT_BINARY_DIR}:$ENV{PATH}"
     )
