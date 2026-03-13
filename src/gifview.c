@@ -39,6 +39,14 @@
 #define EXTERN extern
 #endif
 
+#ifdef __cplusplus
+#define G_THREAD_LOCAL thread_local
+#elif defined(_MSC_VER)
+#define G_THREAD_LOCAL __declspec(thread)
+#else
+#define G_THREAD_LOCAL _Thread_local
+#endif
+
 /*****
  * TIME STUFF (from xwrits)
  **/
@@ -143,7 +151,7 @@ typedef struct Gt_Viewer {
 
 } Gt_Viewer;
 
-const char *program_name = "gifview";
+G_THREAD_LOCAL const char *program_name = "gifview";
 static Clp_Parser* clp;
 
 static const char *cur_display_name = 0;

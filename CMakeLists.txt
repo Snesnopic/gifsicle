@@ -12,6 +12,12 @@ check_include_files(pthread.h HAVE_PTHREAD_H)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
+include(CheckIncludeFiles)
+check_include_files(pthread.h HAVE_PTHREAD_H)
+# check headers dynamically
+check_include_files(unistd.h HAVE_UNISTD_H)
+check_include_files(sys/types.h HAVE_SYS_TYPES_H)
+
 # global macros (replaces config.h.in)
 add_compile_definitions(
         VERSION="${PROJECT_VERSION}"
@@ -20,14 +26,20 @@ add_compile_definitions(
         PATHNAME_SEPARATOR='/'
         RANDOM=random
         HAVE_INTTYPES_H=1
-        HAVE_UNISTD_H=1
-        HAVE_SYS_TYPES_H=1
         HAVE_SNPRINTF=1
         HAVE_STRERROR=1
         HAVE_POW=1
         HAVE_UINTPTR_T=1
 )
 
+# add definitions only if headers are found
+if(HAVE_UNISTD_H)
+    add_compile_definitions(HAVE_UNISTD_H=1)
+endif()
+
+if(HAVE_SYS_TYPES_H)
+    add_compile_definitions(HAVE_SYS_TYPES_H=1)
+endif()
 # thread support: enable only if posix threads are present
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 find_package(Threads)

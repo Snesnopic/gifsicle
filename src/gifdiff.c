@@ -18,6 +18,14 @@
 # include <unistd.h>
 #endif
 
+#ifdef __cplusplus
+#define G_THREAD_LOCAL thread_local
+#elif defined(_MSC_VER)
+#define G_THREAD_LOCAL __declspec(thread)
+#else
+#define G_THREAD_LOCAL _Thread_local
+#endif
+
 #define QUIET_OPT               300
 #define HELP_OPT                301
 #define VERSION_OPT             302
@@ -38,7 +46,7 @@ const Clp_Option options[] = {
   { "version", 'v', VERSION_OPT, 0, 0 }
 };
 
-const char *program_name;
+G_THREAD_LOCAL const char *program_name;
 
 static const char *filename1;
 static const char *filename2;
