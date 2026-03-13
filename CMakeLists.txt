@@ -51,8 +51,18 @@ if(Threads_FOUND AND HAVE_PTHREAD_H)
 endif()
 
 
-# generate empty config.h for legacy includes
-file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/config.h" "/* auto-generated empty config */\n")
+# generate config.h for legacy includes
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/config.h" "/* auto-generated config */
+#ifndef CONFIG_H
+#define CONFIG_H
+#if defined(_WIN32) || defined(_WIN64)
+# include <fcntl.h>
+# include <io.h>
+# define popen _popen
+# define pclose _pclose
+#endif
+#endif
+")
 include_directories("${CMAKE_CURRENT_BINARY_DIR}" "include")
 
 # libgifsicle (core library)
