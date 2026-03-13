@@ -6,17 +6,17 @@
    General Public License, version 2; you can copy, distribute, or alter it at
    will, as long as this notice is kept intact and this source code is made
    available. There is no warranty, express or implied. */
-
+#include <lcdfgif/gif.h>
+#include <stdarg.h>
+#include <assert.h>
+#include <string.h>
 #if HAVE_CONFIG_H
 # include <config.h>
 #elif !defined(__cplusplus)
 /* Assume we don't have inline by default */
 # define inline
 #endif
-#include <lcdfgif/gif.h>
-#include <stdarg.h>
-#include <assert.h>
-#include <string.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

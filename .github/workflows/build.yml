@@ -1,0 +1,97 @@
+name: Multi-platform build
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: build (${{ matrix.asset_name }})
+    runs-on: ${{ matrix.runs_on }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - id: linux-x64
+            runs_on: ubuntu-latest
+            asset_name: "linux-x64"
+            cmake_args: ""
+
+          - id: linux-arm64
+            runs_on: ubuntu-24.04-arm
+            asset_name: "linux-arm64"
+            cmake_args: ""
+
+          - id: macos-x64
+            runs_on: macos-13 # intel
+            asset_name: "macos-x64"
+            cmake_args: "-DBUILD_GIFVIEW=OFF"
+
+          - id: macos-arm64
+            runs_on: macos-14 # apple silicon
+            asset_name: "macos-arm64"
+            cmake_args: "-DBUILD_GIFVIEW=OFF"
+
+          - id: windows-x64
+            runs_on: windows-latest
+            asset_name: "windows-x64"
+            cmake_args: "-DBUILD_GIFVIEW=OFF"
+
+          - id: windows-arm64
+            runs_on: windows-11-arm
+            asset_name: "windows-arm64"
+            cmake_args: "-DBUILD_GIFVIEW=OFF"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libx11-dev
+
+      - name: Set build output directory
+        id: strings
+        shell: bash
+        run: echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+
+      - name: Configure CMake
+        run: >
+          cmake -B ${{ steps.strings.outputs.build-output-dir }}
+          -DCMAKE_BUILD_TYPE=Release
+          ${{ matrix.cmake_args }}
+          -S ${{ github.workspace }}
+
+      - name: Build
+        run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config Release
+
+      - name: Prepare Artifacts
+        shell: bash
+        run: |
+          mkdir -p dist
+          BIN_DIR="${{ steps.strings.outputs.build-output-dir }}"
+          
+          if [[ "${{ runner.os }}" == "Windows" ]]; then
+            # Windows usa la sottocartella Release per i build multi-config di default
+            cp "$BIN_DIR/Release/gifsicle.exe" dist/
+            cp "$BIN_DIR/Release/gifdiff.exe" dist/ 2>/dev/null || true
+          else
+            cp "$BIN_DIR/gifsicle" dist/
+            cp "$BIN_DIR/gifdiff" dist/ 2>/dev/null || true
+            if [ -f "$BIN_DIR/gifview" ]; then
+              cp "$BIN_DIR/gifview" dist/
+            fi
+          fi
+
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gifsicle-${{ matrix.asset_name }}
+          path: dist/*
+          if-no-files-found: error

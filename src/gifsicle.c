@@ -1459,8 +1459,7 @@ error:
  * main
  **/
 
-int
-gifsicle_main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
   /* Check SIZEOF constants (useful for Windows). If these assertions fail,
      you've used the wrong Makefile. You should've used Makefile.w32 for
