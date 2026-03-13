@@ -9,6 +9,9 @@ option(ENABLE_UNGIF "build without lzw compression" OFF)
 include(CheckIncludeFiles)
 check_include_files(pthread.h HAVE_PTHREAD_H)
 
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+
 # global macros (replaces config.h.in)
 add_compile_definitions(
         VERSION="${PROJECT_VERSION}"

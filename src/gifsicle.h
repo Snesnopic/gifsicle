@@ -9,9 +9,6 @@
 
 #ifdef __cplusplus
 #define G_THREAD_LOCAL thread_local
-#elif defined(_MSC_VER)
-// msvc-specific thread local storage
-#define G_THREAD_LOCAL __declspec(thread)
 #else
 #define G_THREAD_LOCAL _Thread_local
 #endif
