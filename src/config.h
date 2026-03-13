@@ -122,7 +122,7 @@
 #define PACKAGE_VERSION "1.96"
 
 /* Pathname separator character ('/' on Unix). */
-#ifdef WIN32
+#ifdef _WIN32
 #undef PATHNAME_SEPARATOR
 #define PATHNAME_SEPARATOR '\\'
 #endif
@@ -145,7 +145,7 @@
 #define STDC_HEADERS 1
 
 /* Define if X is not available. */
-#ifdef WIN32
+#ifdef _WIN32
 #define X_DISPLAY_MISSING 1
 #endif
 
@@ -161,7 +161,7 @@
 #endif
 
 /* Windows doesn't have popen, but it does have _popen. */
-#ifdef WIN32
+#ifdef _WIN32
 #define popen _popen
 #define pclose _pclose
 #endif
