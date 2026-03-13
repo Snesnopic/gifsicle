@@ -66,10 +66,6 @@ set(LIBGIFSICLE_SOURCES
         src/xform.c
 )
 
-if(UNIX)
-    add_compile_definitions(HAVE_MKSTEMP=1)
-endif()
-
 if(ENABLE_UNGIF)
     list(APPEND LIBGIFSICLE_SOURCES src/ungifwrt.c)
     add_compile_definitions(GIF_UNGIF=1)
