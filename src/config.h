@@ -145,7 +145,9 @@
 #define STDC_HEADERS 1
 
 /* Define if X is not available. */
+#ifdef WIN32
 #define X_DISPLAY_MISSING 1
+#endif
 
 /* Define to empty if `const' does not conform to ANSI C. */
 /* #undef const */
